@@ -1,0 +1,7 @@
+# Ignorar carpetas de datos
+data/raw/
+data/processed/
+
+# Ignorar archivos ocultos del sistema o carpetas de python
+__pycache__/
+.DS_Store
