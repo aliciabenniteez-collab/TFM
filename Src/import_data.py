@@ -48,9 +48,13 @@ if __name__ == "__main__":
     matriz_cargada = cargar_datos(ruta_actual)
     matriz_filtrada = filtrar_genes(matriz_cargada)
     matriz_final = normalizar(matriz_filtrada)
+    
+#Creamos una columna llamada Health_label para guardar si las muestras pertenecen a control o parkinson
+matriz_final['Health_Label'] = np.where(matriz_final.index.str.contains("CTRL"), "Control", "Parkinson")
 
-
+#Exportamos la matriz a la carpeta data/processed.
 matriz_final.to_csv("data/processed/datos_estriado_limpios.tsv", sep="\t")
+
 
 
 
