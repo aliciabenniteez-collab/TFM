@@ -1,0 +1,40 @@
+Metodología:
+Gestión de Entornos y Paquetes
+Mamba (vía Miniforge/Mambaforge): Gestor de paquetes y entornos virtuales.
+
+Conda-forge: Repositorio principal de software científico.
+
+Bioconda: Repositorio especializado en herramientas de bioinformática.
+
+Entorno de Desarrollo (IDE)
+Visual Studio Code (VS Code): Editor de código fuente principal.
+
+Extensiones de VS Code:
+
+Python Extension (Microsoft): Soporte para lenguaje Python.
+
+Jupyter Extension (Microsoft): Renderizado y ejecución de cuadernos .ipynb.
+
+R Extension (REditorSupport): Soporte para lenguaje R.
+
+LaTeX Workshop: Compilación y previsualización de documentos .tex.
+
+Lenguajes y Librerías de Análisis
+Python (v3.10): Lenguaje principal de programación.
+
+R (vía r-essentials): Lenguaje para análisis estadístico y gráficos.
+
+Pandas & NumPy: Manipulación de datos y computación numérica.
+
+Scikit-learn: Implementación de modelos de Machine Learning.
+
+Matplotlib & Seaborn: Visualización de datos en Python.
+
+Scanpy & AnnData: Análisis de datos transcriptómicos (Single-cell/Bulk).
+
+ggplot2 (vía R): Generación de gráficos de alta calidad.
+
+Documentación y Escritura
+LaTeX: Sistema de composición de textos para el manuscrito.
+
+Git: Sistema de control de versiones para el código y el texto.
