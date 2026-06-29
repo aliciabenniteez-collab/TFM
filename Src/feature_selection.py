@@ -40,4 +40,11 @@ orden_pvalue=df_resultados.sort_values(by= "p_value", ascending=True) #Ascending
 #Filtramos las primeras 100 filas
 filtro_pvalue = orden_pvalue.head(100)
 
-print(filtro_pvalue.head(10))
+#Extraemos los nombre de los 100 top genes
+genes_top= filtro_pvalue["Gene"]
+matriz_top100g= archivo_cargado[genes_top]
+
+#Exportamos la nueva matriz filtrada
+matriz_top100g.to_csv("data/processed/datos_top100_genes.tsv", sep="\t")
+
+print(matriz_top100g.isna().any().any())

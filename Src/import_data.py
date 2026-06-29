@@ -19,6 +19,7 @@ def cargar_datos(ruta_archivo):
     print(d_estriado_T)
     return(d_estriado_T)
 
+
 #Función para filtrar genes de baja expresión.
 def filtrar_genes(matriz_T):
     #Definimos el umbral en 50% de las muestras
@@ -29,16 +30,16 @@ def filtrar_genes(matriz_T):
     
     #Mostramos el resultado de aplicar el filtro
     print(f"Genes antes del filtro: {matriz_T.shape[1]}")
-    print(f"Genes después del filtro: {matriz_T.shape[1]}")
+    print(f"Genes después del filtro: {df_filtrado.shape[1]}")
     return(df_filtrado) 
 
 
 #Función para normalizar:
 def normalizar(matriz_filtrar_genes):
     #Calculamos las lecturas totales
-    lecturas_total = matriz_filtrada.sum(axis=1) 
+    lecturas_total = matriz_filtrar_genes.sum(axis=1) 
     #Calculamos CPM
-    matriz_CPM = matriz_filtrada.div(lecturas_total, axis=0) * 1e6
+    matriz_CPM = matriz_filtrar_genes.div(lecturas_total, axis=0) * 1e6
     #Calculamos log2 + 1
     matriz_log = np.log2(matriz_CPM + 1)
     return(matriz_log)
@@ -46,9 +47,9 @@ def normalizar(matriz_filtrar_genes):
 #Ejecución del código
 if __name__ == "__main__":
     matriz_cargada = cargar_datos(ruta_actual)
-    matriz_filtrada = filtrar_genes(matriz_cargada)
-    matriz_final = normalizar(matriz_filtrada)
-    
+    matriz_filtrar_genes = filtrar_genes(matriz_cargada)
+    matriz_final = normalizar(matriz_filtrar_genes)
+
 #Creamos una columna llamada Health_label para guardar si las muestras pertenecen a control o parkinson
 matriz_final['Health_Label'] = np.where(matriz_final.index.str.contains("CTRL"), "Control", "Parkinson")
 
