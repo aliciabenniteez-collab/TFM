@@ -5,10 +5,14 @@ from scipy.stats import ttest_ind
 
 
 #Ruta de los datos
-ruta_actual = r"C:\Users\Propietario\Documents\TFM_BIOINFORMATICA\Data\Processed\datos_estriado_limpios.tsv"
+train_data = r"C:\Users\Propietario\Documents\TFM_BIOINFORMATICA\Data\Processed\datos_train_completos.tsv"
+ruta_test_data= r"C:\Users\Propietario\Documents\TFM_BIOINFORMATICA\Data\Processed\datos_test_completos.tsv"
 
-#Cargar archivo:
-archivo_cargado= pd.read_csv(ruta_actual, sep="\t", index_col=0)
+#Cargar archivos:
+archivo_cargado= pd.read_csv(train_data, sep="\t", index_col=0)
+
+test_data= pd.read_csv(ruta_test_data, sep="\t", index_col=0)
+
 
 #Hacemos dos dataframes, una para controles y otra para PD
 sub_df_ctrl= archivo_cargado[archivo_cargado["Health_Label"] == "Control"]
@@ -42,9 +46,17 @@ filtro_pvalue = orden_pvalue.head(100)
 
 #Extraemos los nombre de los 100 top genes
 genes_top= filtro_pvalue["Gene"]
-matriz_top100g= archivo_cargado[genes_top]
+
+#Filtramos y añadimos la columna de Health_Label
+train_matriz_top100 = archivo_cargado[genes_top.tolist() + ["Health_Label"]]
+test_matriz_top100 = test_data[genes_top.tolist() + ["Health_Label"]]
+
+
 
 #Exportamos la nueva matriz filtrada
-matriz_top100g.to_csv("data/processed/datos_top100_genes.tsv", sep="\t")
+train_matriz_top100.to_csv("data/processed/train_top100_genes.tsv", sep="\t")
+test_matriz_top100.to_csv("data/processed/test_top100_genes.tsv", sep="\t")
 
-print(matriz_top100g.isna().any().any())
+#Imprimimos las dimensiones por pantalla
+print(f"Dimensiones finales Train: {train_matriz_top100.shape}")
+print(f"Dimensiones finales Test: {test_matriz_top100.shape}")
