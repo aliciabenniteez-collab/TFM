@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 from sklearn.decomposition import PCA
+from statsmodels.stats.multitest import multipletests
 
 #Ruta datos_train_completos.tsv
 ruta= r"C:\Users\Propietario\Documents\TFM_BIOINFORMATICA\Data\Processed\train_top100_genes.tsv"
@@ -30,6 +31,11 @@ def pca_plot(datos_reducido, ruta_salida, title="PCA Analysis"):
     plt.close()
     
     
+#Benjamini-Hochberg (FDR)
+#df_volcano["p_value"]
+#reject, p_adjusted, _, _ = multipletests(p_values, alpha=0.05, method='fdr_bh')
+    
+    
 #Función Volcano plot
 def gen_Volcano_plot(df_resultados, sub_df_ctrl, sub_df_pd, ruta_salida):
     #Calculamos la media de expresión de cada grupo
@@ -43,8 +49,10 @@ def gen_Volcano_plot(df_resultados, sub_df_ctrl, sub_df_pd, ruta_salida):
     #Copia de df_resultados para el gráfico
     df_volcano = df_resultados.copy()
     
-    #Cálculo del eje Y (-log10 del p_value) dentro de df_resultados
-    df_volcano["minus_log10_p"] = -np.log10(df_volcano["p_value"])
+    #Ajuste Benjamini-Hochberg 
+    reject, p_adjusted, _, _ = multipletests(df_volcano["p_value"], alpha=0.05, method='fdr_bh')
+    df_volcano["q_value"] = p_adjusted
+    df_volcano["minus_log10_p"] = -np.log10(df_volcano["q_value"])
     
     #Pasar "Gene" al índice para que Pandas alinee los datos sólidamente
     df_volcano = df_volcano.set_index("Gene")
@@ -58,10 +66,21 @@ def gen_Volcano_plot(df_resultados, sub_df_ctrl, sub_df_pd, ruta_salida):
     x= "log2FC",
     y= "minus_log10_p",
     )
+    
+    #Asignamos los colores del gráfico
+    rojos = df_volcano[(df_volcano["q_value"] < 0.05) & (df_volcano["log2FC"] > 0.5)]
+    azules = df_volcano[(df_volcano["q_value"] < 0.05) & (df_volcano["log2FC"] < -0.5)]
+    grises = df_volcano[~df_volcano.index.isin(rojos.index) & ~df_volcano.index.isin(azules.index)]
+    #Pintamos
+    plt.scatter(grises["log2FC"], grises["minus_log10_p"], color="#d3d3d3", s=15, alpha=0.5, label="No signif.")
+    plt.scatter(azules["log2FC"], azules["minus_log10_p"], color="#1c00ff", s=25, alpha=0.8, label="Downregulated")
+    plt.scatter(rojos["log2FC"], rojos["minus_log10_p"], color="#ff001c", s=25, alpha=0.8, label="Upregulated")
+    
     plt.title("Volcano Plot - Expresión Diferencial de Genes")
     plt.xlabel("Log2 Fold Change")
-    plt.ylabel("-Log10 p-value")
+    plt.ylabel("-Log10 q-value (FDR)")
     plt.show()
+  
     
     plt.savefig(ruta_salida, dpi=300, bbox_inches="tight")
     plt.close()
