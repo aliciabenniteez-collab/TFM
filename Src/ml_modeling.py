@@ -71,8 +71,6 @@ for nombre_modelo, algoritmo in modelos.items():
     probabilidades_modelos[nombre_modelo]= lista_probabilidades
     
 #Curvas ROC
-
-
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 for nombre_modelo, reales in resultado_modelos.items():
     probabilidades = probabilidades_modelos[nombre_modelo]

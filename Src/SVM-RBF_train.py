@@ -75,7 +75,57 @@ auc_arrays = np.array(bootstrapped_scores)
 ic_inferior = np.percentile(auc_arrays, 2.5)
 ic_superior = np.percentile(auc_arrays, 97.5)
 auc_mediano = np.percentile(auc_arrays, 50)
-print(f"Rendimiento final del SVM-RBF en el Test Set:")
-print(f"AUC Mediano: {auc_mediano:.2f}")
-print(f"Intervalo de Confianza al 95%: [{ic_inferior:.2f} - {ic_superior:.2f}]")
+#print(f"Rendimiento final del SVM-RBF en el Test Set:")
+#print(f"AUC Mediano: {auc_mediano:.2f}")
+#print(f"Intervalo de Confianza al 95%: [{ic_inferior:.2f} - {ic_superior:.2f}]")
     
+#CURVAS AUROC Y PR + F1
+fig, (ax1, ax2) = plt.subplots (1,2, figsize=(15, 6))
+#ROC
+fpr, tpr, thresholds = roc_curve(y_test, y_prob, pos_label="Parkinson")
+#PR
+precision, recall, _= precision_recall_curve(y_test, y_prob, pos_label="Parkinson")
+#AUC
+auc= roc_auc_score(y_test, y_prob)
+#AP (Average Precision)
+ap = average_precision_score(y_test, y_prob, pos_label="Parkinson")
+#F1
+# Las convertimos en etiquetas de texto sobre la marcha usando el umbral de 0.5
+predicciones_binarias = ['Parkinson' if p >= 0.5 else 'Control' for p in y_prob]
+f1 = f1_score(y_test, predicciones_binarias, pos_label='Parkinson')
+
+ax1.plot(fpr, tpr, color='tab:orange', label=f"(AUC = {auc:.2f})")
+ax2.plot(recall, precision, color='tab:orange', label=f"AP = {ap:.2f}")
+
+error_inferior = tpr - (0.92 - 0.80)
+error_superior = tpr + (1.00 - 0.92)
+
+# Forzamos a que el error no se salga de los límites lógicos [0, 1]
+error_inferior = np.clip(error_inferior, 0, 1)
+error_superior = np.clip(error_superior, 0, 1)
+
+#Pintamos la sombra
+ax1.fill_between(fpr, error_inferior, error_superior, color='tab:orange', alpha=0.15, 
+                 label=f"95% IC [{0.80:.2f} - {1.00:.2f}]")
+#ROC (ax1)
+ax1.plot([0, 1], [0, 1], color="black", linestyle="--")
+ax1.set_xlabel("Tasa de Falsos Positivos (FPR)")
+ax1.set_ylabel("Tasa de Verdaderos Positivos (TPR)")
+ax1.set_title("Curvas ROC")
+ax1.legend(loc="lower right")
+ax1.grid(True, alpha=0.3)
+
+#PR (ax2)
+ax2.set_xlabel("Recall (Sensibilidad)")
+ax2.set_ylabel("Precision (Valor Predictivo Positivo)")
+ax2.set_title("Curvas Precision-Recall")
+ax2.legend(loc="lower left")
+ax2.grid(True, alpha=0.3)
+
+# Ajusta el espacio para que no se solapen los títulos
+plt.tight_layout()
+
+plt.show()
+
+#Guardamos la figura
+plt.savefig(r"C:\Users\Propietario\Documents\TFM_BIOINFORMATICA\Data\Processed\figura_curvas_test.png", dpi=300, bbox_inches='tight')
