@@ -1,0 +1,13 @@
+name: python_ml
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pandas
+  - numpy
+  - scikit-learn
+  - shap
+  - geoparse
+  - matplotlib
+  - seaborn

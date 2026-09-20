@@ -2,6 +2,22 @@
 data/raw/
 data/processed/
 Manuscript
+Notebooks
+
+# Entornos virtuales
+env/
+venv/
+.venv/
+
+# Scripts temporales personales
+Src/feature_selection.py
+Src/graphs_functions.py
+Src/verific_split.py
+
+# Carpetas ocultas de Snakemake y caché
+.snakemake/
+Parkinson.bib
+pipeline.dot
 
 
 # Ignorar archivos ocultos del sistema o carpetas de python
