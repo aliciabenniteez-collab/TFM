@@ -4,19 +4,38 @@ os.environ["PATH"] += r";C:\Program Files\R\R-4.6.1\bin"
 
 rule all:
     input:
+        # Preprocesamiento y división de datos
         "Data/Processed/datos_estriado_limpios.tsv",
-        "Results/Imagenes/PCA_inicial.png",
         "Data/Processed/datos_train_completos.tsv",
         "Data/Processed/datos_test_completos.tsv",
         "Data/Processed/train_top100_genes.tsv",
         "Data/Processed/test_top100_genes.tsv",
+        
+        # Tablas de Caracterización de Split
+        "Results/Tablas/Tabla_Caracterizacion_Split.csv",
+        "Results/Tablas/Tabla_Caracterizacion_Split.md",
+        
+        # Análisis Descriptivo e Inferencial (DESeq2 y PCA inicial)
+        "Results/Imagenes/PCA_inicial.png",
         "Results/Imagenes/volcano_deseq2.png",
         "Results/Imagenes/heatmap_deseq2.png",
+        "Results/Tablas/deseq2_results.csv",
+        
+        # PCA y Tabla de Cargas (Loadings)
         "Results/Imagenes/pca_top100.png",
+        "Results/Tablas/tabla_top_genes_pca_loadings.csv",
+        
+        # Modelado en Entrenamiento (Machine Learning CV)
         "Results/Imagenes/curvas_rendimiento_ml.png",
+        "Results/Tablas/tabla_resumen_metricas_ml.csv",
+        "Results/Tablas/tabla_estabilidad_genes_cv.csv",
+        
+        # Evaluación en Conjunto de Test Independiente
         "Data/Processed/matriz_confusion_test.csv",
         "Data/Processed/reporte_clasificacion_test.txt",
         "Results/Imagenes/figura_curvas_test.png",
+        
+        # Explicabilidad del Modelo (SHAP)
         "Results/Imagenes/shap_importancia_barras.png",
         "Results/Imagenes/shap_impacto_beeswarm.png"
 
@@ -45,7 +64,9 @@ rule train_test_split:
         matriz_limpia = "Data/Processed/datos_estriado_limpios.tsv"
     output:
         train_completos = "Data/Processed/datos_train_completos.tsv",
-        test_completos = "Data/Processed/datos_test_completos.tsv"
+        test_completos = "Data/Processed/datos_test_completos.tsv",
+        tabla_csv = "Results/Tablas/Tabla_Caracterizacion_Split.csv",
+        tabla_md = "Results/Tablas/Tabla_Caracterizacion_Split.md"
     script:
         "Src/3_train_test_split.py"
 
@@ -58,7 +79,8 @@ rule deseq2_feature_selection:
         train_top100 = "Data/Processed/train_top100_genes.tsv",
         test_top100 = "Data/Processed/test_top100_genes.tsv",
         volcano_deseq2 = "Results/Imagenes/volcano_deseq2.png",
-        heatmap_deseq2 = "Results/Imagenes/heatmap_deseq2.png"
+        heatmap_deseq2 = "Results/Imagenes/heatmap_deseq2.png",
+        deseq2_results = "Results/Tablas/deseq2_results.csv"
     script:
         "Src/4_run_deseq2.R"
 
@@ -67,7 +89,8 @@ rule run_pca_train:
     input:
         train_genes = "Data/Processed/train_top100_genes.tsv"
     output:
-        grafico_pca = "Results/Imagenes/pca_top100.png"
+        grafico_pca = "Results/Imagenes/pca_top100.png",
+        tabla_loadings = "Results/Tablas/tabla_top_genes_pca_loadings.csv"
     script:
         "Src/5_PCA_train.py"
 
@@ -76,7 +99,9 @@ rule ml_modeling:
     input:
         train_top100 = "Data/Processed/train_top100_genes.tsv"
     output:
-        grafico_curvas = "Results/Imagenes/curvas_rendimiento_ml.png"
+        grafico_curvas = "Results/Imagenes/curvas_rendimiento_ml.png",
+        tabla_metricas = "Results/Tablas/tabla_resumen_metricas_ml.csv",
+        tabla_genes_cv = "Results/Tablas/tabla_estabilidad_genes_cv.csv"
     script:
         "Src/6_ml_modeling.py"
 

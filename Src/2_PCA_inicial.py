@@ -47,8 +47,8 @@ pca = PCA(n_components=2)
 datos_reducido = pca.fit_transform(X_scaled)
 
 var_exp = pca.explained_variance_ratio_ * 100
-print(f"[INFO] PC1 explicada: {var_exp[0]:.2f}%")
-print(f"[INFO] PC2 explicada: {var_exp[1]:.2f}%")
+print(f"PC1 explicada: {var_exp[0]:.2f}%")
+print(f"PC2 explicada: {var_exp[1]:.2f}%")
 
 #Construir DataFrame para el grafico
 df_graph = pd.DataFrame({

@@ -32,7 +32,6 @@ if 'snakemake' not in locals():
     snakemake = Mock()
 
 def extraer_metadatos_soft(ruta_soft):
-    """Parsea el archivo .soft de GEO para extraer metadatos clinicos."""
     metadata = []
     
     with open(ruta_soft, "r", encoding="utf-8") as f:
@@ -85,7 +84,7 @@ def extraer_metadatos_soft(ruta_soft):
         "Parkinson"
     )
     
-    # Casteo a variables numericas
+    # Conversión a variables numericas
     cols_num = ["Age", "PMI", "RIN"]
     for col in cols_num:
         if col in df_meta.columns:
@@ -110,10 +109,22 @@ def cargar_y_fusionar_datos(ruta_counts, df_meta):
         how="inner"
     )
     matriz_final = matriz_final.set_index("Sample_ID")
-    
+    activos = counts_T.sum(axis=0) > 0
+
+    genes_totales = counts_T.shape[1]
+    genes_retenidos = activos.sum()
+    genes_filtrados = genes_totales - genes_retenidos
     print(f"[INFO] Muestras procesadas: {matriz_final.shape[0]}")
     print(f"[INFO] Genes retenidos: {counts_enteros.shape[1]}")
+    print(f"[INFO] Genes totales antes del filtro: {genes_totales}")
+    print(f"[INFO] Genes retenidos: {genes_retenidos}")
+    print(f"[INFO] Genes filtrados: {genes_filtrados}")
+    print(f"[INFO] Porcentaje filtrado: {genes_filtrados / genes_totales * 100:.2f}%")
     return matriz_final
+    
+    
+
+    
 
 
 if __name__ == "__main__":
@@ -133,3 +144,5 @@ if __name__ == "__main__":
     df_completo.to_csv(ruta_out, sep="\t")
     print(df_completo.head(10))
     print(f"Matriz guardada en: {ruta_out}")
+    
+    
